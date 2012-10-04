@@ -1,6 +1,5 @@
 
-
-Hello and welcome to my WEP dictionary script.
+Hello and welcome to my WEPcrack script.
 
 First things first. The following can only be run in a POSIX system. In my case I have used Backtrack If you want to use another POSIX system make sure to do:
 
